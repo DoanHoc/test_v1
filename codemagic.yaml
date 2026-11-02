@@ -1,5 +1,25 @@
 workflows:
-    sample-workflow:
-        name: Codemagic Sample Workflow
-        max_build_duration: 120
-        instance_type: mac_mini_m2
+  ios-workflow:
+    name: Flutter iOS Build
+    instance_type: mac_mini_m2
+    max_build_duration: 120
+
+    environment:
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+
+    scripts:
+      - name: Install dependencies
+        script: flutter pub get
+
+      - name: Install CocoaPods
+        script: |
+          find . -name "Podfile" -execdir pod install \;
+
+      - name: Build iOS
+        script: flutter build ipa --release
+
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
